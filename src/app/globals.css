@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), "Malgun Gothic", sans-serif;
 }
+
+/*
+ * 요약 팝업이 아래 카드(마지막 카드면 more 버튼)를 가리므로 그 요소를 흐리게 처리한다.
+ * 팝업이 뜨는 경우: 터치로 연 카드(data-open), 키보드 포커스, 마우스 hover.
+ * hover 는 터치 기기에서 탭 후 남아 있는 경우가 있어 hover 가능한 기기로 한정한다.
+ */
+.paper-list li:has([data-open], :focus-visible) + li,
+.paper-list:has(li:last-child:has([data-open], :focus-visible)) > button {
+  opacity: 0.6;
+  filter: blur(3px);
+}
+
+@media (hover: hover) {
+  .paper-list li:hover + li,
+  .paper-list:has(li:last-child:hover) > button {
+    opacity: 0.6;
+    filter: blur(3px);
+  }
+}

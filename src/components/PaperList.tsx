@@ -1,22 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PaperCard, { type Paper } from "@/components/PaperCard";
 
 const INITIAL_COUNT = 5;
 
 export default function PaperList({ papers }: { papers: Paper[] }) {
   const [expanded, setExpanded] = useState(false);
+  // 터치로 요약을 연 카드 (한 번에 하나만)
+  const [openId, setOpenId] = useState<string | null>(null);
   const visible = expanded ? papers : papers.slice(0, INITIAL_COUNT);
   const hasMore = papers.length > INITIAL_COUNT;
 
+  // 열린 카드 바깥을 터치하면 요약을 닫는다.
+  useEffect(() => {
+    if (!openId) return;
+    const close = (e: PointerEvent) => {
+      if (!(e.target as Element).closest("[data-open]")) setOpenId(null);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [openId]);
+
   return (
-    // 요약 팝업이 아래 카드(마지막 카드면 버튼)를 가리므로, 그 요소를 흐리게 처리한다.
-    <div className="mt-10 flex flex-col gap-4 [&:has(li:last-child:is(:hover,:focus-within))>button]:opacity-60 [&:has(li:last-child:is(:hover,:focus-within))>button]:blur-[3px]">
-      <ul className="flex flex-col gap-4 [&>li]:transition-[filter,opacity] [&>li:is(:hover,:focus-within)+li]:opacity-60 [&>li:is(:hover,:focus-within)+li]:blur-[3px]">
+    <div className="paper-list mt-10 flex flex-col gap-4">
+      <ul className="flex flex-col gap-4 [&>li]:transition-[filter,opacity]">
         {visible.map((paper) => (
           <li key={paper.id}>
-            <PaperCard paper={paper} />
+            <PaperCard
+              paper={paper}
+              open={openId === paper.id}
+              onOpenChange={(open) => setOpenId(open ? paper.id : null)}
+            />
           </li>
         ))}
       </ul>

@@ -21,7 +21,7 @@ export default function ProfileHeader({
         priority
         className="size-40 rounded-full border-2 border-foreground/60 object-cover"
       />
-      <h1 className="mt-6 text-lg font-semibold">{name}</h1>
+      <h1 className="mt-6 text-lg font-bold">{name}</h1>
       <p className="mt-2 text-sm leading-6 text-foreground/70">{bio}</p>
     </header>
   );

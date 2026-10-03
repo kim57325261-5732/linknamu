@@ -2,11 +2,10 @@ import PaperList from "@/components/PaperList";
 import ProfileHeader from "@/components/ProfileHeader";
 import { papers } from "@/data/papers";
 
-// TODO: 프로필 사진은 아직 더미 — 실제 사진으로 교체할 것
 const profile = {
-  name: "김기준 (Ki Jun Kim)",
-  bio: "전기화학 박사 · 이차전지 선행개발",
-  photoUrl: "/profile-placeholder.svg",
+  name: "김기준",
+  bio: "리튬 이온 배터리 선행 개발자 · AI crew로 활동 중!",
+  photoUrl: "https://placehold.co/320x320/orange/white/png",
 };
 
 export default function Home() {

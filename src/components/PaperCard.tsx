@@ -17,9 +17,13 @@ type Props = {
   /** 터치로 요약을 연 상태 */
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** 이 링크의 클릭 수 */
+  clicks: number;
+  /** 실제로 링크를 열었을 때 호출 (클릭 수 집계용) */
+  onVisit: () => void;
 };
 
-export default function PaperCard({ paper, open, onOpenChange }: Props) {
+export default function PaperCard({ paper, open, onOpenChange, clicks, onVisit }: Props) {
   // click 이벤트만으로는 입력 장치를 알 수 없어서 직전 pointerdown 의 종류를 기억해 둔다.
   const pointerType = useRef("");
 
@@ -36,20 +40,31 @@ export default function PaperCard({ paper, open, onOpenChange }: Props) {
         onClick={(e) => {
           const isTouch = pointerType.current !== "" && pointerType.current !== "mouse";
           pointerType.current = "";
-          if (!isTouch) return;
-          // 터치: 첫 탭은 요약만 띄우고, 두 번째 탭에 논문 사이트로 이동한다.
-          if (!open) {
-            e.preventDefault();
-            onOpenChange(true);
-          } else {
+          if (isTouch) {
+            // 터치: 첫 탭은 요약만 띄우고, 두 번째 탭에 논문 사이트로 이동한다.
+            if (!open) {
+              e.preventDefault();
+              onOpenChange(true);
+              return;
+            }
             onOpenChange(false);
           }
+          onVisit();
         }}
-        className="peer flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl border border-foreground/60 px-5 py-3 text-center transition-colors hover:bg-foreground/5 group-data-open:bg-foreground/5"
+        onAuxClick={(e) => {
+          // 휠 클릭으로 새 탭에서 연 경우도 센다.
+          if (e.button === 1) onVisit();
+        }}
+        className="peer flex min-h-14 items-center gap-3 rounded-xl border border-foreground/60 px-5 py-3 text-center transition-colors hover:bg-foreground/5 group-data-open:bg-foreground/5"
       >
-        <span className="text-sm font-medium leading-5">{paper.title}</span>
-        <span className="text-xs text-foreground/60">
-          {paper.venue} · {paper.year}
+        <span className="flex min-w-0 flex-1 flex-col items-center gap-1">
+          <span className="text-sm font-medium leading-5">{paper.title}</span>
+          <span className="text-xs text-foreground/60">
+            {paper.venue} · {paper.year}
+          </span>
+        </span>
+        <span className="shrink-0 text-xs tabular-nums text-foreground/60">
+          {clicks}회
         </span>
       </a>
       <p
